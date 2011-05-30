@@ -280,8 +280,10 @@ public class minesweeperGui extends JFrame{
 			}
 			return;
 		}
-		else if(grid[row][column]==' ')
+		else if(grid[row][column]==' '){
+			JOptionPane.showMessageDialog(null, "You've already opened that square.", "Try again", JOptionPane.WARNING_MESSAGE);
 			return;
+		}
 		else{//Must be a number. Display it, return. 	
 			interfaceGrid[row][column]=grid[row][column];
 			return;
