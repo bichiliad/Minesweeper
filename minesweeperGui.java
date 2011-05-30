@@ -26,6 +26,7 @@ public class minesweeperGui extends JFrame{
 	static boolean lost = false;//Winning status.
 	static int flags;//Unplaced flags. 
 	static boolean again = true;//If the user wants to play again.
+	static boolean first = true;
 
 	/*
 	 * Constructor for the GUI frame.
@@ -49,7 +50,7 @@ public class minesweeperGui extends JFrame{
 
 		mainFrame.add(scrollPane);
 		mainFrame.setVisible(true);
-		mainFrame.setTitle("Minesweeper v0.25b");
+		mainFrame.setTitle("Minesweeper");
 
 	}
 	/*
@@ -61,12 +62,13 @@ public class minesweeperGui extends JFrame{
 		minesweeperGui g = new minesweeperGui();
 		intro();
 		while(again){
-			myTextArea.setText(null);
+			if(!first)
+				myTextArea.setText(null);
 			printOut("\n                            Right. Lets begin.\n");
 			doPause(1);
 			int height = getInt("What do you want the height of the grid to be? (Max: 26)", 26);
 			int width = getInt("What do you want the width of the grid to be? (Max: 26)", 26);
-			int m = getInt("How many mines do you want in your grid?", (height*width));
+			int m = getInt("How many mines do you want in your grid?\nI recommend you pick " + (int)(Math.ceil(height*width*.1 + 1)) + ".", (height*width));
 			myTextArea.setText(null);
 			printOut("Generating the grid...\n"); gridGenerator(height,width,m); doPause(.8);
 			printOut("Numbering the grid...\n"); gridNumberer(); doPause(.5);
@@ -83,6 +85,7 @@ public class minesweeperGui extends JFrame{
 				doPause(3);
 				System.exit(0);
 			}
+			first = false;
 			mainFrame.setBounds(new Rectangle(new Dimension(680, 410)));
 		}
 	}
@@ -94,7 +97,7 @@ public class minesweeperGui extends JFrame{
 			myTextArea.setText(null);
 			printGrid(interfaceGrid);
 			printOut("\nFlags Left: " + flags);
-			Object[] possibleValues = { "Open a space", "Place a flag"};
+			String[] possibleValues = { "Open a space", "Place a flag"};
 			String s = null;
 			int i=0;
 			while(s == null){
@@ -125,17 +128,17 @@ public class minesweeperGui extends JFrame{
 	public static void intro(){
 		myTextArea.setText(null);
 		title();
-		doPause(5);
+		doPause(4);
 		myTextArea.setText(null);
 		printOut("\n             Welcome to Salem Hilal's fantastic Minesweeper app.\n\n"); 
-		doPause(1);
+		doPause(1.5);
 		printOut("\n  The rules are simple. The game generates a grid of covered spaces containing" +
 				"\n  a certain number of mines. You, the user, pick a coordinate to be \"opened\"." +
 				"\n If it's blank, all surrounding blank spaces are opened, up and until a number" +
 				"\n is reached. A number signifies the number of mines in the surrounding spaces." +
 				"\n You can put flags on spaces you think are mines. If all the mines are flagged," +
 		"\n      YOU WIN. If you open a space with a mine, YOU LOSE. Simple, right?\n");
-		doPause(4);
+		doPause(6);
 	}
 	/*
 	 * Generates a grid of @rows height and @columns width, filling it with @mines mines.
@@ -281,7 +284,6 @@ public class minesweeperGui extends JFrame{
 			return;
 		}
 		else if(grid[row][column]==' '){
-			JOptionPane.showMessageDialog(null, "You've already opened that square.", "Try again", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		else{//Must be a number. Display it, return. 	
@@ -394,7 +396,7 @@ public class minesweeperGui extends JFrame{
 				"\n\n" +
 				"\n================================================================================" +
 				"\n===========================[ CRAPPY GUI EDITION ]===============================" +
-				"\n===========================[  VERSION 0.25 BETA ]===============================" +
+				"\n===========================[    BETA VERSION    ]===============================" +
 				"\n===========================[     SALEM HILAL    ]===============================" +
 				"\n================================================================================");
 	}
@@ -446,21 +448,27 @@ public class minesweeperGui extends JFrame{
 			input = JOptionPane.showInputDialog(prompt);
 			stop=true;
 			try{
-				c=input.charAt(0);
-				if("ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(Character.toUpperCase(c))<0){
-					JOptionPane.showMessageDialog(null, "That's not a valid character. Try again.", "Try again", JOptionPane.WARNING_MESSAGE);
+				if(input.length()>1){
+					JOptionPane.showMessageDialog(null, "Only enter one letter, please.", "Try again", JOptionPane.WARNING_MESSAGE);
 					stop = false;
 				}
-				else if(row){
-					if("ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(Character.toUpperCase(c))>=grid.length){
-						JOptionPane.showMessageDialog(null, "That's out of range. Try again.", "Try again", JOptionPane.WARNING_MESSAGE);
+				else{
+					c=input.charAt(0);
+					if("ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(Character.toUpperCase(c))<0){
+						JOptionPane.showMessageDialog(null, "That's not a valid character. Try again.", "Try again", JOptionPane.WARNING_MESSAGE);
 						stop = false;
 					}
-				}
-				else if(!row){
-					if("ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(Character.toUpperCase(c))>=grid[0].length){
-						JOptionPane.showMessageDialog(null, "That's out of range. Try again.", "Try again", JOptionPane.WARNING_MESSAGE);
-						stop = false;
+					else if(row){
+						if("ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(Character.toUpperCase(c))>=grid.length){
+							JOptionPane.showMessageDialog(null, "That's out of range. Try again.", "Try again", JOptionPane.WARNING_MESSAGE);
+							stop = false;
+						}
+					}
+					else if(!row){
+						if("ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(Character.toUpperCase(c))>=grid[0].length){
+							JOptionPane.showMessageDialog(null, "That's out of range. Try again.", "Try again", JOptionPane.WARNING_MESSAGE);
+							stop = false;
+						}
 					}
 				}
 			}
