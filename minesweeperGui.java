@@ -18,7 +18,7 @@ public class minesweeperGui extends JFrame{
 	private static JTextArea myTextArea;//Text is displayed here.
 	private JScrollPane scrollPane;//This houses the textArea to make it scrollable.
 	private static JFrame mainFrame;//This is the window.
-	static Font font = new Font("Monospaced", Font.PLAIN, 13);//The font.
+	static Font font = new Font("Monospaced", Font.PLAIN, 14);//The font.
 
 	//App stuff.
 	private static char grid[][];//"The Answers," what the computer knows.
@@ -74,7 +74,7 @@ public class minesweeperGui extends JFrame{
 					l++;
 				}
 				printOut("SCORE (So far):    Wins: " + wins + "    Losses: " + losses + "\nWin/Loss ratio: " + ((wins+0.0)/l) + "\n");
-				printOut("Game History:\n" + record);	
+				printOut("\nGame History:" + record + "\n");	
 
 			}
 			printOut("\n                            Right. Let's begin.\n");
@@ -94,15 +94,21 @@ public class minesweeperGui extends JFrame{
 					"Would you like to play again?", "Again?", JOptionPane.YES_NO_OPTION);
 			if(quit == 1){
 				again = false;
-				for(int j=3; j>0; j--){
+				int l = losses;
+				if(losses == 0){
+					l++;
+				}
+				for(int j=5; j>0; j--){
 					myTextArea.setText(null);
-					printOut("Thanks for playing! \nGame will close automatically in "+ j + " seconds.");
+					printOut("Thanks for playing! \nGame will close automatically in "+ j + " seconds.\n");
+					printOut("OVERALL SCORE:    Wins: " + wins + "    Losses: " + losses + "\nWin/Loss ratio: " + ((wins+0.0)/l) + "\n");
+					printOut("\nGame History:" + record + "\n");
 					doPause(1);
 				}				
 				System.exit(0);
 			}
 			first = false;
-			mainFrame.setBounds(new Rectangle(new Dimension(680, 410)));
+			mainFrame.setBounds(new Rectangle(new Dimension(730, 460)));
 			mainFrame.setLocationRelativeTo(null);
 			gamecount++;
 		}
@@ -560,5 +566,3 @@ public class minesweeperGui extends JFrame{
 		return i;
 	}
 }
-
-
