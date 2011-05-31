@@ -23,7 +23,7 @@ public class minesweeperGui extends JFrame{
 	//App stuff.
 	static char grid[][];//"The Answers," what the computer knows.
 	static char interfaceGrid[][];//What the user sees.
-	static boolean lost = false;//Winning status.
+	static boolean lost;//Winning status.
 	static int flags;//Unplaced flags. 
 	static boolean again = true;//If the user wants to play again.
 	static boolean first = true;
@@ -64,7 +64,7 @@ public class minesweeperGui extends JFrame{
 		while(again){
 			if(!first)
 				myTextArea.setText(null);
-			printOut("\n                            Right. Lets begin.\n");
+			printOut("\n                            Right. Let's begin.\n");
 			doPause(1);
 			int height = getInt("What do you want the height of the grid to be? (Max: 26)", 26);
 			int width = getInt("What do you want the width of the grid to be? (Max: 26)", 26);
@@ -87,6 +87,7 @@ public class minesweeperGui extends JFrame{
 			}
 			first = false;
 			mainFrame.setBounds(new Rectangle(new Dimension(680, 410)));
+			mainFrame.setLocationRelativeTo(null);
 		}
 	}
 	/*
@@ -94,6 +95,7 @@ public class minesweeperGui extends JFrame{
 	 */
 	public static void runGame() throws IOException{
 		do{
+			lost=false;
 			myTextArea.setText(null);
 			printGrid(interfaceGrid);
 			printOut("\nFlags Left: " + flags);
@@ -436,6 +438,7 @@ public class minesweeperGui extends JFrame{
 			height=410;
 		}
 		mainFrame.setBounds(new Rectangle(new Dimension(680, height+150)));		
+		mainFrame.setLocationRelativeTo(null);
 	}
 	/*
 	 * This prints out @prompt and gets a character, looping until a character has been entered.
