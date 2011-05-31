@@ -21,12 +21,16 @@ public class minesweeperGui extends JFrame{
 	static Font font = new Font("Monospaced", Font.PLAIN, 13);//The font.
 
 	//App stuff.
-	static char grid[][];//"The Answers," what the computer knows.
-	static char interfaceGrid[][];//What the user sees.
-	static boolean lost;//Winning status.
-	static int flags;//Unplaced flags. 
-	static boolean again = true;//If the user wants to play again.
-	static boolean first = true;
+	private static char grid[][];//"The Answers," what the computer knows.
+	private static char interfaceGrid[][];//What the user sees.
+	private static boolean lost;//Winning status.
+	private static int flags;//Unplaced flags. 
+	private static boolean again = true;//If the user wants to play again.
+	private static boolean first = true;
+	private static int wins = 0;
+	private static int losses = 0;
+	private static String record = ""; 
+	private static boolean roundWin;
 
 	/*
 	 * Constructor for the GUI frame.
@@ -61,9 +65,18 @@ public class minesweeperGui extends JFrame{
 		@SuppressWarnings("unused")
 		minesweeperGui g = new minesweeperGui();
 		intro();
+		int gamecount = 1;
 		while(again){
-			if(!first)
+			if(!first){
 				myTextArea.setText(null);
+				int l = losses;
+				if(losses == 0){
+					l++;
+				}
+				printOut("SCORE (So far):    Wins: " + wins + "    Losses: " + losses + "\nWin/Loss ratio: " + ((wins+0.0)/l) + "\n");
+				printOut("Game History:\n" + record);	
+
+			}
 			printOut("\n                            Right. Let's begin.\n");
 			doPause(1);
 			int height = getInt("What do you want the height of the grid to be? (Max: 26)", 26);
@@ -76,19 +89,48 @@ public class minesweeperGui extends JFrame{
 			printOut("Resizing window...\n"); doPause(.4); resizeWindow();
 			runGame();
 			doPause(4);
+			updateRecord(height, width,m, gamecount);
 			int quit = JOptionPane.showConfirmDialog(null,
 					"Would you like to play again?", "Again?", JOptionPane.YES_NO_OPTION);
 			if(quit == 1){
 				again = false;
-				myTextArea.setText(null);
-				printOut("Thanks for playing!");
-				doPause(3);
+				for(int j=3; j>0; j--){
+					myTextArea.setText(null);
+					printOut("Thanks for playing! \nGame will close automatically in "+ j + " seconds.");
+					doPause(1);
+				}				
 				System.exit(0);
 			}
 			first = false;
 			mainFrame.setBounds(new Rectangle(new Dimension(680, 410)));
 			mainFrame.setLocationRelativeTo(null);
+			gamecount++;
 		}
+	}
+	/*
+	 * updates the record string that logs all the game files. 
+	 */
+	public static void updateRecord(int h, int w, int m, int i){
+		String hei = h + "", wid = w + "", mi = m + "", l = "";
+		if(h<10){
+			hei = " " + h;
+		}
+		if(w<10){
+			wid = " " + w;
+		}
+		if(m<10){
+			mi = "  " + m;
+		}
+		else if (m<100){
+			mi = " " + m;
+		}
+		if(roundWin){
+			l = "WON";
+		}
+		else{
+			l = "LOST";
+		}
+		record = record + "\n" + i +  ". " + hei + " by " + wid + " grid with " + mi + " mines: " + l;
 	}
 	/*
 	 * This is the loop in which the game "runs."
@@ -109,9 +151,11 @@ public class minesweeperGui extends JFrame{
 					int quit = JOptionPane.showConfirmDialog(null,
 							"Would you like to quit the game?", "Quit?", JOptionPane.YES_NO_OPTION);
 					if(quit == 0){
-						myTextArea.setText(null);
-						printOut("Thanks for playing!");
-						doPause(3);
+						for(int j=3; j>0; j--){
+							myTextArea.setText(null);
+							printOut("Thanks for playing! \nGame will close automatically in "+ j + " seconds.");
+							doPause(1);
+						}
 						System.exit(0);
 					}
 				}
@@ -263,6 +307,8 @@ public class minesweeperGui extends JFrame{
 		if(grid[row][column]=='*'){
 			myTextArea.setText(null);
 			printOut("Awh man, you just stepped on a mine. Game over.");
+			losses++;
+			roundWin = false;
 			lost=true;
 			gameEnd();
 			return;
@@ -370,7 +416,8 @@ public class minesweeperGui extends JFrame{
 	public static void gameEnd(){
 		if(!lost){
 			myTextArea.setText(null);
-			printOut("\nYou found all the mines. Good job, bro.\n");
+			printOut("You found all the mines. Good job, bro.\n"); wins++;
+			roundWin = true;
 		}
 		else{
 			printOut("\n");
@@ -437,7 +484,7 @@ public class minesweeperGui extends JFrame{
 		if(height<=410){
 			height=410;
 		}
-		mainFrame.setBounds(new Rectangle(new Dimension(680, height+150)));		
+		mainFrame.setBounds(new Rectangle(new Dimension(680, height+200)));		
 		mainFrame.setLocationRelativeTo(null);
 	}
 	/*
